@@ -12,12 +12,29 @@ c.f. https://downloads.haskell.org/~ghc/latest/docs/html/users_guide/interactive
 c.f. http://stackoverflow.com/questions/5535512/how-to-hack-ghci-or-hugs-so-that-it-prints-unicode-chars-unescaped/13113906#13113906
 
 
+@
+$ __ghci__
+...
+Ok, modules loaded: Text.Show.Unicode.
+> __["哈斯克尔7.6.1"]__
+["\\21704\\26031\\20811\\23572\\&7.6.1"]
+>
+@
+
+
+@
+$ __ghci -interactive-print=Text.Show.Unicode.uprint Text.Show.Unicode__
+...
+Ok, modules loaded: Text.Show.Unicode.
+> __("Хорошо!",["哈斯克尔7.6.1的力量","感じる"])__
+("Хорошо!",["哈斯克尔7.6.1的力量","感じる"])
+>
+@
+
+
 -}
 
-
 module Text.Show.Unicode (ushow, uprint) where
-
-
 
 import Control.Applicative ((<$>), (<$), (<|>))
 import Text.ParserCombinators.ReadP

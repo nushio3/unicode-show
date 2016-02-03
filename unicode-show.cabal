@@ -1,7 +1,13 @@
 name:                unicode-show
 version:             0.1.0.0
-synopsis:            Initial project template from stack
-description:         Please see README.md
+synopsis:            print and show in unicode
+description:
+            This package provides variants of 'show' and 'print' functions that does not escape non-ascii characters. Run ghci with  __@-interactive-print@__ flag to prints unicode characters. See <https://downloads.haskell.org/~ghc/latest/docs/html/users_guide/interactive-evaluation.html#ghci-interactive-print Using a custom interactive printing function> section in the GHC manual.
+
+
+
+
+
 homepage:            http://github.com/githubuser/unicode-show#readme
 license:             BSD3
 license-file:        LICENSE
