@@ -26,10 +26,11 @@ $ __ghci -interactive-print=Text.Show.Unicode.uprint Text.Show.Unicode__
 Ok, modules loaded: Text.Show.Unicode.
 > __("Хорошо!",["哈斯克尔7.6.1的力量","感じる"])__
 ("Хорошо!",["哈斯克尔7.6.1的力量","感じる"])
->
+> "改\\n行"
+"改\\n行"
 @
 
-Add following lines to your __~/.ghci__ to make 'uprint' the default interactive printer.
+Add following lines to your @~/.ghci@ config file to make 'uprint' the default interactive printer.
 
 @
 import qualified Text.Show.Unicode
@@ -67,16 +68,18 @@ reparse p = concat <$> many (recoverChar p)
 
 
 -- | Show the input, and then replace Haskell character literals
--- with the character it represents, for any Unicode printable characters. If something fails,
+-- with the character it represents, for any Unicode printable characters but '\\'. If something fails,
 -- fallback to standard 'show'.
 ushow :: Show a => a -> String
-ushow = ushowWith isPrint
+ushow = ushowWith (\c -> isPrint c && c /= '\\')
 
 -- | A version of 'print' that uses 'ushow'.
 uprint :: Show a => a -> IO ()
 uprint = putStrLn . ushow
 
 
+-- | Show the input, and then replace character literals
+-- with the character itself, for characters that satisfy the given predicate.
 ushowWith :: Show a => (Char -> Bool) -> a -> String
 ushowWith p x = let showx = show x in case readP_to_S (reparse p) $ showx of
            [] -> showx
