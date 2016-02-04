@@ -1,4 +1,4 @@
-# unicode-show : readable unicode characters in print and show.
+# unicode-show : readable unicode characters in print and show. [![Build Status](https://travis-ci.org/nushio3/unicode-show.svg?branch=master)](https://travis-ci.org/nushio3/unicode-show)
 
 
 Provides a interactive printer for printing Unicode characters in ghci REPL. Our design goal is that `uprint` produces String representations that are valid Haskell `String` literals, and uses as many Unicode printable characters as possible. Hence
@@ -43,4 +43,4 @@ import qualified Text.Show.Unicode
 
 ## References
 * https://ghc.haskell.org/trac/ghc/ticket/11529
-*
+* http://stackoverflow.com/questions/5535512/how-to-hack-ghci-or-hugs-so-that-it-prints-unicode-chars-unescaped?lq=1
