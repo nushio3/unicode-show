@@ -59,6 +59,8 @@ import Text.ParserCombinators.ReadP
 
 
 
+type Replacement = (String, String)
+
 -- | Parse a value of type 'a', toghether with the original representation.
 -- This is needed because a quotation mark character can be represented in two ways ---
 -- @"@ or @\\"@ , and we'd like to preserve both representations.
@@ -72,33 +74,26 @@ readsWithMatch parser input =
 --
 --  * If the found char satisfies the predicate, replace the literal string with the character itself.
 --  * Otherwise, leave the string as it was.
---  * If delimiter character '\&' is found, replace it with a null string. c.f.  <https://www.haskell.org/onlinereport/haskell2010/haskellch2.html#x7-200002.6 Section 2.6 of the Haskell 2010 specification>.
+--  * Note that special delimiter sequence "\&" may appear in a string. c.f.  <https://www.haskell.org/onlinereport/haskell2010/haskellch2.html#x7-200002.6 Section 2.6 of the Haskell 2010 specification>.
 
-recoverChar :: (Char -> Bool) -> ReadP String
-recoverChar p = (represent <$> readS_to_P (readsWithMatch readLitChar)) <|> (string "\\&")
+recoverChar :: (Char -> Bool) -> ReadP Replacement
+recoverChar p = (represent <$> readS_to_P (readsWithMatch readLitChar)) <|> (("\\&","\\&") <$ string "\\&")
   where
-    represent :: (Char, String) -> String
-    represent (c,_) | p c  = [c]
-    represent (c,original) = original
+    represent :: (Char, String) -> Replacement
+    represent (c,original) | p c  = (original, [c])
+    represent (_,original)        = (original, original)
 
 -- | Parse many Haskell character literals from the input,
 -- and concatenate them.
-reparse :: (Char -> Bool) -> ReadP [Char]
-reparse p = cat2 False <$> many (recoverChar p)
+reparse :: (Char -> Bool) -> ReadP String
+reparse p = cat2 ("","") <$> many (recoverChar p)
   where
     -- concatenate while removing redundant separator.
-    cat2 :: Bool -> [String] -> String
+    cat2 :: Replacement -> [Replacement] -> String
     cat2 _ [] = ""
-    cat2 canDeleteSep (x:xs)
-      | x == ""                     = cat2 canDeleteSep xs
-      | x == "\\&" && canDeleteSep  = cat2 canDeleteSep xs
-      | x == "\\&"                  = x ++ cat2 False xs
-      | otherwise                   = x ++ cat2 (judge x) xs
-
-    -- if character after
-    judge :: String -> Bool
-    judge [x] = ("\\"==)$ take 1 $ drop 1 $ show x
-    judge _   = False
+    cat2 (pb,pa) ((xb,xa):xs)
+      | pb /= pa && xb == "\\&"  =       cat2 (xb,xa) xs
+      | otherwise                = xa ++ cat2 (xb,xa) xs
 
 
 -- | Show the input, and then replace Haskell character literals
