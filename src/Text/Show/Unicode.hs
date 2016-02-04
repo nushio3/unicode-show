@@ -20,7 +20,6 @@ With 'print' :
 @
 $ __ghci__
 ...
-Ok, modules loaded: Text.Show.Unicode.
 > __["哈斯克尔7.6.1"]__
 ["\\21704\\26031\\20811\\23572\\&7.6.1"]
 >

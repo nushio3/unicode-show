@@ -14,7 +14,6 @@ With `print` :
 ```
 $ ghci
 ...
-Ok, modules loaded: Text.Show.Unicode.
 > ["哈斯克尔7.6.1"]
 ["\21704\26031\20811\23572\&7.6.1"]
 >
