@@ -1,10 +1,28 @@
+{-# LANGUAGE ScopedTypeVariables #-}
+
+
 import Test.Framework (defaultMain, testGroup)
 import Test.Framework.Providers.API (Test)
 import Test.Framework.Providers.HUnit (testCase)
 import Test.Framework.Providers.QuickCheck2 (testProperty)
 import Test.HUnit.Base hiding (Test)
 
-import Text.Show.Unicode
+import Text.Show.Unicode hiding (ushow)
+
+
+
+
+ushow :: Show a => a -> String
+ushow x = go (show x) where
+      go :: String -> String
+      go [] = []
+      go s@(x:xs) = case x of
+          '\"' -> '\"' : str ++ "\"" ++ go rest
+          '\'' -> '\'' : char : '\'' : go rest'
+          _    -> x : go xs
+        where
+          (str :: String, rest):_ = reads s
+          (char :: Char, rest'):_ = reads s
 
 data T試6験 = Å4 { すけろく :: String} deriving (Eq, Ord, Show, Read)
 data T試7験 = String :\& String  deriving (Eq, Ord, Show, Read)
