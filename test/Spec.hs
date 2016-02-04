@@ -24,9 +24,12 @@ ushowTo f t = testCase ("ushow " ++ show f ++ " == " ++ t) $ t @=? ushow f
 tests :: [Test]
 tests =
   [ testGroup "individual representations test"
-    [
-      "漢6" `ushowTo` "\"漢6\""
-    , "\na\ri\ta 国際空港" `ushowTo` "\"\\na\\ri\\ta 国際空港\""
+    [ "صباح الخير" `ushowTo` "\"صباح الخير\""
+    , "😆💕>λ\\=🐘" `ushowTo`  "\"😆💕>λ\\\\=🐘\""
+    , "漢6" `ushowTo` "\"漢6\""
+    , "\32\&7" `ushowTo` "\" 7\""
+    , "改\n行" `ushowTo` "\"改\\n行\""
+    , "下一站\na\ri\ta国际机场" `ushowTo` "\"下一站\\na\\ri\\ta国际机场\""
     , "\SOH\SO\&H" `ushowTo` "\"\\SOH\\SO\\&H\""
     ]
 
