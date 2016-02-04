@@ -1,0 +1,39 @@
+# c.f. https://github.com/commercialhaskell/stack/wiki/Travis
+sudo: false
+
+before_install:
+  # enable stack
+  - ./scripts/set-resolver.sh $RESOLVER > stack-travis.yaml
+  - export STACK_YAML=stack-travis.yaml
+  - mkdir -p ~/.local/bin
+  - mkdir -p ~/.local/lib
+  - export PATH=~/.local/bin:$PATH
+  - export LD_LIBRARY_PATH=~/.local/lib:$LD_LIBRARY_PATH
+  - ./scripts/install-z3.sh
+  - travis_retry curl -L https://www.stackage.org/stack/linux-x86_64 | tar xz --wildcards --strip-components=1 -C ~/.local/bin '*/stack'
+  - stack setup
+  - stack install sbv
+
+
+matrix:
+  include:
+    - env: RESOLVER=lts-1
+    - env: RESOLVER=lts-2
+    - env: RESOLVER=lts-3
+    - env: RESOLVER=lts-4
+    - env: RESOLVER=nightly
+  allow_failures:
+    - env: RESOLVER=lts-1 # The output format of SBV has changed.
+    - env: RESOLVER=lts-2 # The change makes some doctests fail.
+    - env: RESOLVER=nightly
+
+addons:
+  apt:
+    sources:
+    - hvr-ghc
+    packages:
+    - libgmp-dev
+
+script:
+  - stack --no-terminal --skip-ghc-check build --ghc-options=-ferror-spans
+  - stack test
