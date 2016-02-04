@@ -30,9 +30,11 @@ test-suite unicode-show-test
   hs-source-dirs:      test
   main-is:             Spec.hs
   build-depends:       base
+                     , HUnit
                      , QuickCheck
                      , unicode-show
                      , test-framework
+                     , test-framework-hunit
                      , test-framework-quickcheck2
 
   ghc-options:         -threaded -rtsopts -with-rtsopts=-N
