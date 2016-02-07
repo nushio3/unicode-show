@@ -36,6 +36,10 @@ tests =
   , testGroup "read . ushow == id"
     [ testProperty "read . ushow == id, for String" $
       \str -> read (ushow str) == (str :: String)
+    , testProperty "read . ushow == id, for Char" $
+      \x -> read (ushow x) == (x :: Char)
+    , testProperty "read . ushow == id, for [(Char,())]" $
+      \x -> read (ushow x) == (x :: [(Char,())])
     , testProperty "read . read . ushow . ushow == id, for String" $
       \str -> (read $ read $ ushow $ ushow str) == (str :: String)
     , testProperty "read . ushow == id, for some crazy Unicode type" $
