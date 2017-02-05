@@ -10,11 +10,7 @@ import Test.HUnit.Base hiding (Test)
 import Text.Show.Unicode
 
 data T試6験 = Å4 { すけろく :: String} deriving (Eq, Ord, Show, Read)
-data T試7験 = String :\& String  deriving (Eq, Ord, Show, Read)
-
--- Derived instance of Read and Show produced by GHC
--- does not satisfy Haskell 2010 spec, for the moment (ghc 7.10.3).
--- Therefore, we must regretfully skip this test.
+data T試7験 = String :@\& String  deriving (Eq, Ord, Show, Read)
 data T試8験 = String :＠\& String  deriving (Eq, Ord, Show, Read)
 
 
@@ -45,12 +41,15 @@ tests =
     , testProperty "read . ushow == id, for some crazy Unicode type" $
       \str -> let v = Å4 str in read (ushow v) == v
     , testProperty "read . ushow == id, for some crazy Unicode type" $
-      \a b -> let v = a :\& b in read (ushow v) == v
---     , testProperty "read . ushow == id, for some crazy Unicode type" $
---       \a b -> let v = a :＠\& b in read (show v) == v
+      \a b -> let v = a :@\& b in read (ushow v) == v
+    , testProperty "read . ushow == id, for some crazy Unicode type" $
+      \a b -> let v = a :＠\& b in read (show v) == v
     , testProperty "read . ushow == id, for compound type" $
       \str -> read (ushow str) == (str :: Either [String] (String,String))
     ]
   ]
 main :: IO ()
-main = defaultMain tests
+main = do
+  print $ "hoge" :@\& "huga"
+  putStrLn $ ushow $ "hoge" :@\& "huga"
+  defaultMain tests
