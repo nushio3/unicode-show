@@ -48,7 +48,7 @@ import qualified Text.Show.Unicode
 -}
 
 
-module Text.Show.Unicode (ushow, uprint, ushowWith, uprintWith) where
+module Text.Show.Unicode (uconvString, uconvStringWith, ushow, uprint, ushowWith, uprintWith) where
 
 import Control.Applicative ((<$>), (<$), (<|>))
 import GHC.Show (showLitChar)
@@ -95,11 +95,21 @@ reparse p = cat2 ("","") <$> many (recoverChar p)
       | otherwise                = xa ++ cat2 (xb,xa) xs
 
 
+uconvString :: String -> String
+uconvString = uconvStringWith (\c -> isPrint c && c `notElem` ['\\', '\'','\"'])
+
+uconvStringWith :: (Char -> Bool) -> String -> String
+uconvStringWith p str = case readP_to_S (reparse p) str of
+  [] -> str
+  ys -> case last ys of
+    (ret,"") -> ret
+    _        -> str
+
 -- | Show the input, and then replace Haskell character literals
 -- with the character it represents, for any Unicode printable characters except backslash, single and double quotation marks.
 -- If something fails, fallback to standard 'show'.
 ushow :: Show a => a -> String
-ushow = ushowWith (\c -> isPrint c && not (c `elem` ['\\', '\'','\"'] ))
+ushow = uconvString . show
 
 -- | A version of 'print' that uses 'ushow'.
 uprint :: Show a => a -> IO ()
@@ -109,11 +119,7 @@ uprint = putStrLn . ushow
 -- | Show the input, and then replace character literals
 -- with the character itself, for characters that satisfy the given predicate.
 ushowWith :: Show a => (Char -> Bool) -> a -> String
-ushowWith p x = let showx = show x in case readP_to_S (reparse p) $ showx of
-           [] -> showx
-           ys -> case last ys of
-             (ret,"") -> ret
-             _        -> showx
+ushowWith p = uconvStringWith p . show
 
 -- | A version of 'print' that uses 'ushowWith'.
 uprintWith :: Show a => (Char -> Bool) -> a -> IO ()
