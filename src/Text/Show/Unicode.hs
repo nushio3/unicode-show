@@ -45,6 +45,35 @@ import qualified Text.Show.Unicode
 :set -interactive-print=Text.Show.Unicode.uprint
 @
 
+__Note__
+
+If you get errors like:
+@
+ghci> uprint "🥰"
+"*** Exception: <stdout>: hPutChar: invalid argument (invalid character)
+@
+
+That's becasue of the terminal's default local encoding is not `utf-8`.
+
+You can check your localeEncoding by:
+@
+ghci> import System.IO
+ghci> localeEncoding
+CP936
+@
+
+Add set the localeEncoding by:
+@
+ghci> import GHC.IO.Encoding
+ghci> setLocaleEncoding utf8
+@
+
+This works for platforms like Linux,but not works for platform like Window.
+
+For the full solutions,please view to this document:
+
+* <https://hackage.haskell.org/package/base-4.19.0.0/docs/GHC-IO-Encoding.html#v:setLocaleEncoding>
+
 -}
 
 
